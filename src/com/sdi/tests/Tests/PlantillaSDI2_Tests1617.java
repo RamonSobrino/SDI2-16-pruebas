@@ -57,18 +57,25 @@ public class PlantillaSDI2_Tests1617 {
 		
 		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
 		
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 10);
 		SeleniumUtils.textoPresentePagina(driver, "Opciones de administrador");
-		assertTrue(false);	
+		//assertTrue(false);	
     }
 	//PR02: Fallo en la autenticación del administrador por introducir mal el login.
 	@Test
     public void prueba02() {
-		assertTrue(false);
+		new PO_AltaForm().rellenaEntrada(driver, "admin", "admin1");
+		
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 10);
+		SeleniumUtils.textoPresentePagina(driver, "Error");
     }
 	//PR03: Fallo en la autenticación del administrador por introducir mal la password.
 	@Test
     public void prueba03() {
-		assertTrue(false);
+		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin");
+		
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 10);
+		SeleniumUtils.textoPresentePagina(driver, "Error");
     }
 	//PR04: Probar que la base de datos contiene los datos insertados con conexión correcta a la base de datos.
 	@Test
@@ -78,7 +85,19 @@ public class PlantillaSDI2_Tests1617 {
 	//PR05: Visualizar correctamente la lista de usuarios normales. 
 	@Test
     public void prueba05() {
-		assertTrue(false);
+		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 10);
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver, "form-cabecera:MenuOpciones", "form-cabecera:listar");
+		
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 10);
+
+		//SeleniumUtils.textoPresentePagina(driver, "Lista de Usuarios");
+		SeleniumUtils.textoPresentePagina(driver, "user1");
+		SeleniumUtils.textoPresentePagina(driver, "user2");
+		SeleniumUtils.textoPresentePagina(driver, "user3");
+		
     }
 	//PR06: Cambiar el estado de un usuario de ENABLED a DISABLED. Y tratar de entrar con el usuario que se desactivado.
 	@Test
@@ -93,6 +112,12 @@ public class PlantillaSDI2_Tests1617 {
 	//PR08: Ordenar por Login
 	@Test
     public void prueba08() {
+		
+		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "ui-sortable-colum", 2); 
+		
+
 		assertTrue(false);
     }
 	//PR09: Ordenar por Email
