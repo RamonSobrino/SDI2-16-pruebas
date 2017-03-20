@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxBinary;
@@ -57,7 +58,7 @@ public class PlantillaSDI2_Tests1617 {
 		
 		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
 		
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 10);
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 		SeleniumUtils.textoPresentePagina(driver, "Opciones de administrador");
 		//assertTrue(false);	
     }
@@ -66,7 +67,7 @@ public class PlantillaSDI2_Tests1617 {
     public void prueba02() {
 		new PO_AltaForm().rellenaEntrada(driver, "admin", "admin1");
 		
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 10);
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 60);
 		SeleniumUtils.textoPresentePagina(driver, "Error");
     }
 	//PR03: Fallo en la autenticación del administrador por introducir mal la password.
@@ -74,7 +75,7 @@ public class PlantillaSDI2_Tests1617 {
     public void prueba03() {
 		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin");
 		
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 10);
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 60);
 		SeleniumUtils.textoPresentePagina(driver, "Error");
     }
 	//PR04: Probar que la base de datos contiene los datos insertados con conexión correcta a la base de datos.
@@ -87,11 +88,11 @@ public class PlantillaSDI2_Tests1617 {
     public void prueba05() {
 		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
 		
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 10);
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 
 		SeleniumUtils.ClickSubopcionMenuHover(driver, "form-cabecera:MenuOpciones", "form-cabecera:listar");
 		
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 10);
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "user1", 60);
 
 		//SeleniumUtils.textoPresentePagina(driver, "Lista de Usuarios");
 		SeleniumUtils.textoPresentePagina(driver, "user1");
@@ -117,6 +118,9 @@ public class PlantillaSDI2_Tests1617 {
 
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "ui-sortable-colum", 2); 
 		
+		elementos.get(1).click();
+		
+		
 
 		assertTrue(false);
     }
@@ -133,7 +137,13 @@ public class PlantillaSDI2_Tests1617 {
 	//PR11: Borrar  una cuenta de usuario normal y datos relacionados.
 	@Test
     public void prueba11() {
-		assertTrue(false);
+		WebElement registro = driver.findElement(By.id("form-principal:register"));
+		
+		registro.click();
+		
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Email", 60);
+		
+		
     }
 	//PR12: Crear una cuenta de usuario normal con datos válidos.
 	@Test
