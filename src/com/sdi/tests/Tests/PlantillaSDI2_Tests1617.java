@@ -3,6 +3,10 @@ package com.sdi.tests.Tests;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -11,7 +15,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxBinary;
@@ -19,8 +22,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
 
-import com.sdi.tests.pageobjects.PO_AltaForm;
+import com.sdi.tests.pageobjects.PO_LoginForm;
 import com.sdi.tests.pageobjects.PO_RegisterForm;
+import com.sdi.tests.pageobjects.PO_TaskForm;
 import com.sdi.tests.utils.SeleniumUtils;
 
 //Ordenamos las pruebas por el nombre del método
@@ -59,7 +63,7 @@ public class PlantillaSDI2_Tests1617 {
 	@Test
 	public void prueba01() {
 
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 		SeleniumUtils.textoPresentePagina(driver, "Opciones de administrador");
@@ -69,7 +73,7 @@ public class PlantillaSDI2_Tests1617 {
 	// login.
 	@Test
 	public void prueba02() {
-		new PO_AltaForm().rellenaEntrada(driver, "admin", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin", "admin1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 60);
 		SeleniumUtils.textoPresentePagina(driver,
@@ -80,7 +84,7 @@ public class PlantillaSDI2_Tests1617 {
 	// password.
 	@Test
 	public void prueba03() {
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 60);
 		SeleniumUtils.textoPresentePagina(driver,
@@ -91,7 +95,7 @@ public class PlantillaSDI2_Tests1617 {
 	// conexión correcta a la base de datos.
 	@Test
 	public void prueba04() {
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 		WebElement restart = SeleniumUtils.EsperaCargaPagina(driver, "id",
 				"restartdb", 60).get(0);
 		// Pulsamos iniciar base de datos
@@ -115,7 +119,7 @@ public class PlantillaSDI2_Tests1617 {
 	// PR05: Visualizar correctamente la lista de usuarios normales.
 	@Test
 	public void prueba05() {
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 
@@ -135,7 +139,7 @@ public class PlantillaSDI2_Tests1617 {
 	// entrar con el usuario que se desactivado.
 	@Test
 	public void prueba06() {
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 
@@ -154,7 +158,7 @@ public class PlantillaSDI2_Tests1617 {
 		SeleniumUtils.ClickSubopcionMenuHover(driver,
 				"form-cabecera:MenuOpciones", "form-cabecera:cerrar");
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Login", 60);
-		new PO_AltaForm().rellenaEntrada(driver, "user3", "user3");
+		new PO_LoginForm().rellenaEntrada(driver, "user3", "user3");
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Error", 60);
 		SeleniumUtils.textoPresentePagina(driver,
 				"Usuario o contraseña incorrectos");
@@ -164,7 +168,7 @@ public class PlantillaSDI2_Tests1617 {
 	// entrar con el usuario que se ha activado.
 	@Test
 	public void prueba07() {
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 
@@ -183,7 +187,7 @@ public class PlantillaSDI2_Tests1617 {
 		SeleniumUtils.ClickSubopcionMenuHover(driver,
 				"form-cabecera:MenuOpciones", "form-cabecera:cerrar");
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Login", 60);
-		new PO_AltaForm().rellenaEntrada(driver, "user3", "user3");
+		new PO_LoginForm().rellenaEntrada(driver, "user3", "user3");
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 		SeleniumUtils.textoPresentePagina(driver, "Opciones de usuario");
 	}
@@ -192,10 +196,10 @@ public class PlantillaSDI2_Tests1617 {
 	@Test
 	public void prueba08() {
 
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
-				"class", "ui-sortable-colum", 2);
+				"class", "ui-sortable-colum", 60);
 
 		elementos.get(1).click();
 
@@ -228,7 +232,7 @@ public class PlantillaSDI2_Tests1617 {
 
 		// Entramos como administrador
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Login", 60);
-		new PO_AltaForm().rellenaEntrada(driver, "admin1", "admin1");
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 
@@ -239,11 +243,12 @@ public class PlantillaSDI2_Tests1617 {
 		WebElement borrame = SeleniumUtils.EsperaCargaPagina(driver, "id",
 				"listado_form:user-table:4", 60).get(1);
 		borrame.click();
-		WebElement confirm = SeleniumUtils.EsperaCargaPagina(driver, "text", "Si", 60).get(0);
-		//FIXME: No hace click bien en la confirmacion
+		WebElement confirm = SeleniumUtils.EsperaCargaPagina(driver, "text",
+				"Si", 60).get(0);
+		// FIXME: No hace click bien en la confirmacion
 		Actions ac = new Actions(driver);
 		ac.click(confirm);
-		//ac.keyDown(Keys.ENTER);
+		// ac.keyDown(Keys.ENTER);
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver a casa", 60);
 		SeleniumUtils.textoNoPresentePagina(driver, "borrame");
 
@@ -260,12 +265,11 @@ public class PlantillaSDI2_Tests1617 {
 		new PO_RegisterForm().rellenaEntrada(driver, "testuser",
 				"test@example.org", "testus3r", "testus3r");
 
-		SeleniumUtils.EsperaCargaPagina(driver, "text",
-				"Exito", 60);
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Exito", 60);
 		SeleniumUtils.textoPresentePagina(driver, "Registrado correctamente");
-		
-		//Comprobar que te puedes loguear correctamente
-		new PO_AltaForm().rellenaEntrada(driver, "testuser", "testus3r");
+
+		// Comprobar que te puedes loguear correctamente
+		new PO_LoginForm().rellenaEntrada(driver, "testuser", "testus3r");
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
 		SeleniumUtils.textoPresentePagina(driver, "Opciones de usuario");
 	}
@@ -278,7 +282,7 @@ public class PlantillaSDI2_Tests1617 {
 		registerLink.click();
 		SeleniumUtils.EsperaCargaPagina(driver, "text",
 				"Registrar nuevo usuario", 60);
-		new PO_RegisterForm().rellenaEntrada(driver, "user1",
+		new PO_RegisterForm().rellenaEntrada(driver, "admin1",
 				"test@example.org", "testus3r", "testus3r");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text",
@@ -332,37 +336,65 @@ public class PlantillaSDI2_Tests1617 {
 	// tres páginas.
 	@Test
 	public void prueba16() {
-		new PO_AltaForm().rellenaEntrada(driver, "user1", "user1");
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
-		SeleniumUtils.ClickSubopcionMenuHover(driver, "form-cabecera:MenuOpciones", "form-cabecera:listar");
-		
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
-		//TODO: comprobar que son realmente las que tienen que ser
+		// TODO: comprobar que son realmente las que tienen que ser
 		SeleniumUtils.textoPresentePagina(driver, "1 de 3");
 		SeleniumUtils.textoNoPresentePagina(driver, "categoria");
-		WebElement pag2 = driver.findElements(By.className("ui-paginator-page")).get(1);
+		WebElement pag2 = driver
+				.findElements(By.className("ui-paginator-page")).get(1);
 		pag2.click();
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "2 de", 60);
 		SeleniumUtils.textoPresentePagina(driver, "2 de 3");
 		SeleniumUtils.textoNoPresentePagina(driver, "categoria");
-		WebElement pag3 = driver.findElements(By.className("ui-paginator-page")).get(2);
+		WebElement pag3 = driver
+				.findElements(By.className("ui-paginator-page")).get(2);
 		pag3.click();
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "3 de", 60);
 		SeleniumUtils.textoPresentePagina(driver, "3 de 3");
 		SeleniumUtils.textoNoPresentePagina(driver, "categoria");
+		assertTrue(false);
 	}
 
 	// PR17: Funcionamiento correcto de la ordenación por fecha planeada.
 	@Test
 	public void prueba17() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		assertFalse(true);
 	}
 
 	// PR18: Funcionamiento correcto del filtrado.
 	@Test
 	public void prueba18() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		WebElement filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("20");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Tarea 20", 20);
+		SeleniumUtils.textoPresentePagina(driver, "Tarea 20");
+
+		filter.clear();
+		filter.sendKeys("15");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Tarea 15", 20);
+		SeleniumUtils.textoPresentePagina(driver, "Tarea 15");
+
+		filter.clear();
+		filter.sendKeys("No existe esta tarea");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "No hay tareas", 20);
+		SeleniumUtils.textoPresentePagina(driver, "No hay tareas");
 	}
 
 	// PR19: Funcionamiento correcto de la ordenación por categoría.
@@ -421,21 +453,89 @@ public class PlantillaSDI2_Tests1617 {
 	// lista Inbox.
 	@Test
 	public void prueba27() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:addTarea");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Finalizada", 60);
+
+		new PO_TaskForm().rellenaEntrada(driver, "Esta va para inbox", "",
+				"Un comentario", "", "");
+
+		WebElement title = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"title", 60).get(0);
+		assertEquals("Inbox", title.getText());
+
+		WebElement filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("para inbox");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Esta va", 20);
+		SeleniumUtils.textoPresentePagina(driver, "Esta va para inbox");
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
 	}
 
 	// PR28: Crear una tarea con categoría categoria1 y fecha planeada Hoy y
 	// comprobar que se muestra en la lista Hoy.
 	@Test
 	public void prueba28() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:addTarea");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Finalizada", 60);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		String hoy = sdf.format(new Date());
+
+		new PO_TaskForm().rellenaEntrada(driver, "Prueba list hoy",
+				"category_1", "Un comentario", hoy, "");
+
+		WebElement title = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"title", 60).get(0);
+		assertEquals("Dia", title.getText());
+
+		WebElement filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("Prueba");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "list hoy", 20);
+		SeleniumUtils.textoPresentePagina(driver, "Prueba list hoy");
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
 	}
 
 	// PR29: Crear una tarea con categoría categoria1 y fecha planeada posterior
 	// a Hoy y comprobar que se muestra en la lista Semana.
 	@Test
 	public void prueba29() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:addTarea");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Finalizada", 60);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DAY_OF_MONTH, 3);
+
+		String thisWeek = sdf.format(c.getTime());
+
+		new PO_TaskForm().rellenaEntrada(driver, "Para la semana",
+				"category_1", "Un comentario", thisWeek, "");
+
+		WebElement title = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"title", 60).get(0);
+		assertEquals("Semana", title.getText());
+
+		WebElement filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("Para la");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "la semana", 20);
+		SeleniumUtils.textoPresentePagina(driver, "Para la semana");
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
 	}
 
 	// PR30: Editar el nombre, y categoría de una tarea (se le cambia a
@@ -443,6 +543,7 @@ public class PlantillaSDI2_Tests1617 {
 	// refresca correctamente.
 	@Test
 	public void prueba30() {
+
 		assertTrue(false);
 	}
 
@@ -464,38 +565,131 @@ public class PlantillaSDI2_Tests1617 {
 	// PR33: Salir de sesión desde cuenta de administrador.
 	@Test
 	public void prueba33() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:cerrar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Exito", 60);
+		SeleniumUtils.textoPresentePagina(driver, "Sesion cerrada con exito");
+		SeleniumUtils.textoPresentePagina(driver, "Login");
+		SeleniumUtils.textoPresentePagina(driver, "Registrarse");
 	}
 
 	// PR34: Salir de sesión desde cuenta de usuario normal.
 	@Test
 	public void prueba34() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user2", "user2");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:cerrar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Exito", 60);
+		SeleniumUtils.textoPresentePagina(driver, "Sesion cerrada con exito");
+		SeleniumUtils.textoPresentePagina(driver, "Login");
+		SeleniumUtils.textoPresentePagina(driver, "Registrarse");
 	}
 
 	// PR35: Cambio del idioma por defecto a un segundo idioma. (Probar algunas
 	// vistas)
 	@Test
 	public void prueba35() {
-		assertTrue(false);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuIdiomas", "form-cabecera:english");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Register", 60);
+
+		SeleniumUtils.textoPresentePagina(driver, "Register");
+		SeleniumUtils.textoPresentePagina(driver, "Create notes");
+		SeleniumUtils.textoPresentePagina(driver, "User");
+		SeleniumUtils.textoPresentePagina(driver, "Password");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Register", 60);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Create notes", 60);
+
+		SeleniumUtils.textoPresentePagina(driver, "User Options");
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Delete", 60);
+
+		SeleniumUtils.textoPresentePagina(driver, "Day");
+		SeleniumUtils.textoPresentePagina(driver, "Week");
+		SeleniumUtils.textoPresentePagina(driver, "Category");
+		SeleniumUtils.textoPresentePagina(driver, "Created");
 	}
 
 	// PR36: Cambio del idioma por defecto a un segundo idioma y vuelta al
 	// idioma por defecto. (Probar algunas vistas)
 	@Test
 	public void prueba36() {
-		assertTrue(false);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuIdiomas", "form-cabecera:english");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Register", 60);
+
+		SeleniumUtils.textoPresentePagina(driver, "Register");
+		SeleniumUtils.textoPresentePagina(driver, "Create notes");
+		SeleniumUtils.textoPresentePagina(driver, "User");
+		SeleniumUtils.textoPresentePagina(driver, "Password");
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuIdiomas", "form-cabecera:spanish");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Registrarse", 60);
+		SeleniumUtils.textoPresentePagina(driver, "Registrarse");
+		SeleniumUtils.textoPresentePagina(driver, "Crea notas");
+		SeleniumUtils.textoPresentePagina(driver, "Usuario");
+		SeleniumUtils.textoPresentePagina(driver, "Contraseña");
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuIdiomas", "form-cabecera:english");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Register", 60);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Create notes", 60);
+
+		SeleniumUtils.textoPresentePagina(driver, "User Options");
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuIdiomas", "form-cabecera:spanish");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.textoPresentePagina(driver, "Opciones de usuario");
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuIdiomas", "form-cabecera:english");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Create notes", 60);
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Delete", 60);
+
+		SeleniumUtils.textoPresentePagina(driver, "Day");
+		SeleniumUtils.textoPresentePagina(driver, "Week");
+		SeleniumUtils.textoPresentePagina(driver, "Category");
+		SeleniumUtils.textoPresentePagina(driver, "Created");
+
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuIdiomas", "form-cabecera:spanish");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Borrar", 60);
+
+		SeleniumUtils.textoPresentePagina(driver, "Dia");
+		SeleniumUtils.textoPresentePagina(driver, "Semana");
+		SeleniumUtils.textoPresentePagina(driver, "Categoria");
+		SeleniumUtils.textoPresentePagina(driver, "Creada");
+
 	}
 
 	// PR37: Intento de acceso a un URL privado de administrador con un usuario
 	// autenticado como usuario normal.
 	@Test
 	public void prueba37() {
-		new PO_AltaForm().rellenaEntrada(driver, "user1", "user1");
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
-		
-		driver.get(baseURL+"/admin/opciones.xhtml");
+
+		driver.get(baseURL + "/admin/opciones.xhtml");
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Login", 60);
 		SeleniumUtils.textoPresentePagina(driver, "GTD Task Manager");
 		SeleniumUtils.textoPresentePagina(driver, "Login");
@@ -505,7 +699,7 @@ public class PlantillaSDI2_Tests1617 {
 	// no autenticado.
 	@Test
 	public void prueba38() {
-		driver.get(baseURL+"/user/opciones.xhtml");
+		driver.get(baseURL + "/user/opciones.xhtml");
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Login", 60);
 		SeleniumUtils.textoPresentePagina(driver, "GTD Task Manager");
 		SeleniumUtils.textoPresentePagina(driver, "Login");
