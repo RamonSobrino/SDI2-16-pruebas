@@ -5,22 +5,27 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
+import org.seleniumhq.jetty9.util.log.Log;
 
 import com.sdi.tests.pageobjects.PO_LoginForm;
 import com.sdi.tests.pageobjects.PO_RegisterForm;
@@ -112,8 +117,41 @@ public class PlantillaSDI2_Tests1617 {
 		SeleniumUtils.textoPresentePagina(driver, "user1");
 		SeleniumUtils.textoPresentePagina(driver, "user2");
 		SeleniumUtils.textoPresentePagina(driver, "user3");
-		// TODO: comprobar que los usuarios tiene las tareas bien
-		assertTrue(false);
+
+		// Salimos de administrador
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:cerrar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Exito", 60);
+
+		// Comprobamos user1
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones de usuario",
+				60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "1 de 3", 60);
+		// Tareas inbox pagina 1
+		for (int i = 1; i <= 8; i++) {
+			SeleniumUtils.textoPresentePagina(driver, "Tarea " + i);
+		}
+		// Tareas inbox pagina 2
+		WebElement pag2 = driver
+				.findElements(By.className("ui-paginator-page")).get(1);
+		pag2.click();
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "2 de 3", 60);
+
+		for (int i = 9; i <= 16; i++) {
+			SeleniumUtils.textoPresentePagina(driver, "Tarea " + i);
+		}
+		WebElement pag3 = driver
+				.findElements(By.className("ui-paginator-page")).get(2);
+		pag3.click();
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "3 de 3", 60);
+		for (int i = 17; i <= 20; i++) {
+			SeleniumUtils.textoPresentePagina(driver, "Tarea " + i);
+		}
+
 	}
 
 	// PR05: Visualizar correctamente la lista de usuarios normales.
@@ -195,15 +233,49 @@ public class PlantillaSDI2_Tests1617 {
 	// PR08: Ordenar por Login
 	@Test
 	public void prueba08() {
-
+		//TODO: Arreglar esto
 		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text",
+				"Opciones de administrador", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+		SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"listado_form:user-table:3", 60);
 
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
 				"class", "ui-sortable-colum", 60);
 
-		elementos.get(1).click();
+		// Comprobar al derechas
+		elementos.get(2).click();
+		By loginXpath = By.xpath("//table/tbody/tr/td[2]");
+		List<WebElement> logins = driver.findElements(loginXpath);
+		List<String> loginsStr = new ArrayList<>();
+		for (WebElement webElement : logins) {
+			loginsStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(loginsStr);
+		Collections.sort(expected);
+		for (int i = 0; i < loginsStr.size(); i++) {
+			assertEquals(expected.get(0), loginsStr.get(0));
+		}
 
-		assertTrue(false);
+		// Comprobar al reves
+		driver.findElements(
+				By.xpath("//*[contains(@class,'" + "ui-sortable-colum" + "')]"))
+				.get(2).click();
+		logins = driver.findElements(loginXpath);
+		loginsStr = new ArrayList<>();
+		for (WebElement webElement : logins) {
+			loginsStr.add(webElement.getText());
+		}
+		expected = new ArrayList<>(loginsStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < loginsStr.size(); i++) {
+			assertEquals(expected.get(0), loginsStr.get(0));
+		}
+
 	}
 
 	// PR09: Ordenar por Email
@@ -243,15 +315,13 @@ public class PlantillaSDI2_Tests1617 {
 		WebElement borrame = SeleniumUtils.EsperaCargaPagina(driver, "id",
 				"listado_form:user-table:4", 60).get(1);
 		borrame.click();
-		WebElement confirm = SeleniumUtils.EsperaCargaPagina(driver, "text",
-				"Si", 60).get(0);
-		// FIXME: No hace click bien en la confirmacion
-		Actions ac = new Actions(driver);
-		ac.click(confirm);
-		// ac.keyDown(Keys.ENTER);
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver a casa", 60);
-		SeleniumUtils.textoNoPresentePagina(driver, "borrame");
+		WebElement confirm = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"4:comfirm-delete", 60).get(0);
+		confirm.click();
 
+		// Comprobamos borrado
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Exito", 60);
+		SeleniumUtils.textoNoPresentePagina(driver, "borrame");
 	}
 
 	// PR12: Crear una cuenta de usuario normal con datos válidos.
@@ -332,8 +402,8 @@ public class PlantillaSDI2_Tests1617 {
 
 	// USUARIO
 	// PR16: Comprobar que en Inbox sólo aparecen listadas las tareas sin
-	// categoría y que son las que tienen que. Usar paginación navegando por las
-	// tres páginas.
+	// categoría y que son las que tienen que ser. Usar paginación navegando por
+	// las tres páginas.
 	@Test
 	public void prueba16() {
 		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
