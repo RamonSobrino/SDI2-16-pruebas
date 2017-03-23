@@ -3,7 +3,7 @@ package com.sdi.tests.Tests;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,21 +11,18 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.interactions.Actions;
-import org.seleniumhq.jetty9.util.log.Log;
+import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.sdi.tests.pageobjects.PO_LoginForm;
 import com.sdi.tests.pageobjects.PO_RegisterForm;
@@ -233,21 +230,24 @@ public class PlantillaSDI2_Tests1617 {
 	// PR08: Ordenar por Login
 	@Test
 	public void prueba08() {
-		//TODO: Arreglar esto
 		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text",
 				"Opciones de administrador", 60);
 		SeleniumUtils.ClickSubopcionMenuHover(driver,
 				"form-cabecera:MenuOpciones", "form-cabecera:listar");
-		SeleniumUtils.EsperaCargaPagina(driver, "id",
-				"listado_form:user-table:3", 60);
 
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
-				"class", "ui-sortable-colum", 60);
+				"id", "user-table:order_login", 60);
 
 		// Comprobar al derechas
-		elementos.get(2).click();
+		WebElement loginHead = elementos.get(0);
+		loginHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
 		By loginXpath = By.xpath("//table/tbody/tr/td[2]");
 		List<WebElement> logins = driver.findElements(loginXpath);
 		List<String> loginsStr = new ArrayList<>();
@@ -257,13 +257,16 @@ public class PlantillaSDI2_Tests1617 {
 		List<String> expected = new ArrayList<>(loginsStr);
 		Collections.sort(expected);
 		for (int i = 0; i < loginsStr.size(); i++) {
-			assertEquals(expected.get(0), loginsStr.get(0));
+			assertEquals(expected.get(i), loginsStr.get(i));
 		}
 
 		// Comprobar al reves
-		driver.findElements(
-				By.xpath("//*[contains(@class,'" + "ui-sortable-colum" + "')]"))
-				.get(2).click();
+		loginHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
 		logins = driver.findElements(loginXpath);
 		loginsStr = new ArrayList<>();
 		for (WebElement webElement : logins) {
@@ -273,7 +276,7 @@ public class PlantillaSDI2_Tests1617 {
 		Collections.sort(expected);
 		Collections.reverse(expected);
 		for (int i = 0; i < loginsStr.size(); i++) {
-			assertEquals(expected.get(0), loginsStr.get(0));
+			assertEquals(expected.get(i), loginsStr.get(i));
 		}
 
 	}
@@ -281,13 +284,107 @@ public class PlantillaSDI2_Tests1617 {
 	// PR09: Ordenar por Email
 	@Test
 	public void prueba09() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text",
+				"Opciones de administrador", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
+				"id", "user-table:order_email", 60);
+
+		By emailXpath = By.xpath("//table/tbody/tr/td[3]");
+		// Comprobar al derechas
+		WebElement emailHead = elementos.get(0);
+		emailHead.click();
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e1) {
+		}
+		List<WebElement> emails = driver.findElements(emailXpath);
+		List<String> emailsStr = new ArrayList<>();
+		for (WebElement webElement : emails) {
+			emailsStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(emailsStr);
+		Collections.sort(expected);
+		for (int i = 0; i < emailsStr.size(); i++) {
+			assertEquals(expected.get(i), emailsStr.get(i));
+		}
+
+		// Comprobar al reves
+		emailHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		emails = driver.findElements(emailXpath);
+		emailsStr = new ArrayList<>();
+		for (WebElement webElement : emails) {
+			emailsStr.add(webElement.getText());
+		}
+		expected = new ArrayList<>(emailsStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < emailsStr.size(); i++) {
+			assertEquals(expected.get(i), emailsStr.get(i));
+		}
+
 	}
 
 	// PR10: Ordenar por Status
 	@Test
 	public void prueba10() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "admin1", "admin1");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text",
+				"Opciones de administrador", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
+				"id", "listado_form:user-table:order_status", 60);
+
+		By statusXpath = By.xpath("//table/tbody/tr/td[4]");
+		// Comprobar al derechas
+		WebElement statusHead = elementos.get(0);
+		statusHead.click();
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e1) {
+		}
+		List<WebElement> statuses = driver.findElements(statusXpath);
+		List<String> statusStr = new ArrayList<>();
+		for (WebElement webElement : statuses) {
+			statusStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(statusStr);
+		Collections.sort(expected);
+		for (int i = 0; i < statusStr.size(); i++) {
+			assertEquals(expected.get(i), statusStr.get(i));
+		}
+
+		// Comprobar al reves
+		statusHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		statuses = driver.findElements(statusXpath);
+		statusStr = new ArrayList<>();
+		for (WebElement webElement : statuses) {
+			statusStr.add(webElement.getText());
+		}
+		expected = new ArrayList<>(statusStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < statusStr.size(); i++) {
+			assertEquals(expected.get(i), statusStr.get(i));
+		}
+
 	}
 
 	// PR11: Borrar una cuenta de usuario normal y datos relacionados.
@@ -413,22 +510,29 @@ public class PlantillaSDI2_Tests1617 {
 				"form-cabecera:MenuOpciones", "form-cabecera:listar");
 
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
-		// TODO: comprobar que son realmente las que tienen que ser
 		SeleniumUtils.textoPresentePagina(driver, "1 de 3");
 		SeleniumUtils.textoNoPresentePagina(driver, "categoria");
+		for (int i = 1; i <= 8; i++) {
+			SeleniumUtils.textoPresentePagina(driver, "Tarea " + i);
+		}
 		WebElement pag2 = driver
 				.findElements(By.className("ui-paginator-page")).get(1);
 		pag2.click();
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "2 de", 60);
 		SeleniumUtils.textoPresentePagina(driver, "2 de 3");
 		SeleniumUtils.textoNoPresentePagina(driver, "categoria");
+		for (int i = 9; i <= 16; i++) {
+			SeleniumUtils.textoPresentePagina(driver, "Tarea " + i);
+		}
 		WebElement pag3 = driver
 				.findElements(By.className("ui-paginator-page")).get(2);
 		pag3.click();
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "3 de", 60);
 		SeleniumUtils.textoPresentePagina(driver, "3 de 3");
 		SeleniumUtils.textoNoPresentePagina(driver, "categoria");
-		assertTrue(false);
+		for (int i = 17; i <= 20; i++) {
+			SeleniumUtils.textoPresentePagina(driver, "Tarea " + i);
+		}
 	}
 
 	// PR17: Funcionamiento correcto de la ordenación por fecha planeada.
@@ -439,7 +543,47 @@ public class PlantillaSDI2_Tests1617 {
 		SeleniumUtils.ClickSubopcionMenuHover(driver,
 				"form-cabecera:MenuOpciones", "form-cabecera:listar");
 
-		assertFalse(true);
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
+				"id", "task_planned", 60);
+
+		// Comprobar al derechas
+		WebElement plannedHead = elementos.get(0);
+		plannedHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		By plannedXpath = By.xpath("//table/tbody/tr/td[6]");
+		List<WebElement> planned = driver.findElements(plannedXpath);
+		List<String> plannedStr = new ArrayList<>();
+		for (WebElement webElement : planned) {
+			plannedStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(plannedStr);
+		Collections.sort(expected);
+		for (int i = 0; i < plannedStr.size(); i++) {
+			assertEquals(expected.get(i), plannedStr.get(i));
+		}
+
+		// Comprobar al reves
+		plannedHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		planned = driver.findElements(plannedXpath);
+		plannedStr = new ArrayList<>();
+		for (WebElement webElement : planned) {
+			plannedStr.add(webElement.getText());
+		}
+		expected = new ArrayList<>(plannedStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < plannedStr.size(); i++) {
+			assertEquals(expected.get(i), plannedStr.get(i));
+		}
 	}
 
 	// PR18: Funcionamiento correcto del filtrado.
@@ -470,13 +614,128 @@ public class PlantillaSDI2_Tests1617 {
 	// PR19: Funcionamiento correcto de la ordenación por categoría.
 	@Test
 	public void prueba19() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "listDia", 60).get(0)
+				.click();
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
+				"id", "task_category", 60);
+
+		// Comprobar al derechas
+		WebElement categoryHead = elementos.get(0);
+		categoryHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		By categoryXpath = By.xpath("//table/tbody/tr/td[3]");
+		List<WebElement> categories = driver.findElements(categoryXpath);
+		List<String> categoriesStr = new ArrayList<>();
+		for (WebElement webElement : categories) {
+			categoriesStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(categoriesStr);
+		Collections.sort(expected);
+		for (int i = 0; i < categoriesStr.size(); i++) {
+			assertEquals(expected.get(i), categoriesStr.get(i));
+		}
+
+		// Comprobar al reves
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"task_category", 60);
+		categoryHead = elementos.get(0);
+		categoryHead.click();
+
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		categories = driver.findElements(categoryXpath);
+		categoriesStr = new ArrayList<>();
+		for (WebElement webElement : categories) {
+			if (StringUtil.isNotBlank(webElement.getText())) {
+				categoriesStr.add(webElement.getText());
+			}
+		}
+		expected = new ArrayList<>(categoriesStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < categoriesStr.size(); i++) {
+			assertEquals(expected.get(i), categoriesStr.get(i));
+		}
 	}
 
 	// PR20: Funcionamiento correcto de la ordenación por fecha planeada.
 	@Test
 	public void prueba20() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
+		WebElement bDia = driver.findElement(By.id("listDia"));
+		bDia.click();
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
+				"id", "task_planned", 60);
+
+		// Comprobar al derechas
+		WebElement plannedHead = elementos.get(0);
+		plannedHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		By plannedXpath = By.xpath("//table/tbody/tr/td[6]");
+		List<WebElement> planned = driver.findElements(plannedXpath);
+		List<String> plannedStr = new ArrayList<>();
+		for (WebElement webElement : planned) {
+			plannedStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(plannedStr);
+		Collections.sort(expected);
+		for (int i = 0; i < plannedStr.size(); i++) {
+			assertEquals(expected.get(i), plannedStr.get(i));
+		}
+
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"task_planned", 60);
+
+		// Comprobar al derechas
+		plannedHead = elementos.get(0);
+		// Comprobar al reves
+		plannedHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		planned = driver.findElements(plannedXpath);
+		plannedStr = new ArrayList<>();
+		for (WebElement webElement : planned) {
+			plannedStr.add(webElement.getText());
+		}
+		expected = new ArrayList<>(plannedStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < plannedStr.size(); i++) {
+			assertEquals(expected.get(i), plannedStr.get(i));
+		}
 	}
 
 	// PR21: Comprobar que las tareas que no están en rojo son las de hoy y
@@ -484,32 +743,158 @@ public class PlantillaSDI2_Tests1617 {
 	@Test
 	public void prueba21() {
 		assertTrue(false);
+		// TODO
 	}
 
 	// PR22: Comprobar que las tareas retrasadas están en rojo y son las que
 	// deben ser.
 	@Test
 	public void prueba22() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
+		WebElement bDia = driver.findElement(By.id("listDia"));
+		bDia.click();
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "form-pie", 60);
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e1) {
+		}
+
+		By plannedXpath = By.xpath("//table/tbody/tr/td[6]/span");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		List<WebElement> planned = driver.findElements(plannedXpath);
+		for (WebElement webElement : planned) {
+			assertEquals("rgba(255, 0, 0, 1)", webElement.getCssValue("color"));
+			Date actual = null;
+			try {
+				actual = sdf.parse(webElement.getText());
+			} catch (ParseException e) {
+				fail("Error parseando la fecha");
+			}
+			assertTrue(actual.before(new Date()));
+		}
+		// TODO: igual que el anterior
 	}
 
 	// PR23: Comprobar que las tareas de hoy y futuras no están en rojo y que
 	// son las que deben ser.
 	@Test
 	public void prueba23() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
+		WebElement bDia = driver.findElement(By.id("listSemana"));
+		bDia.click();
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "form-pie", 60);
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e1) {
+		}
+		for (int i = 3; i >= 0; i--) {
+			WebElement pag3 = driver.findElements(
+					By.className("ui-paginator-page")).get(i);
+			pag3.click();
+			SeleniumUtils.EsperaCargaPagina(driver, "text", (i + 1) + " de 4",
+					60);
+			// Sacar planeados
+			By trXpath = By.xpath("//table/tbody/tr");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			List<WebElement> planned = driver.findElements(trXpath);
+			By plannedXpath = By.xpath("//td[6]");
+			By catXpath = By.xpath("//td[3]/span");
+			for (WebElement webElement : planned) {
+				Date actual = null;
+				try {
+					actual = sdf.parse(webElement.findElement(plannedXpath)
+							.getText());
+				} catch (ParseException e) {
+					fail("Error parseando la fecha");
+				}
+				if (!actual.before(new Date())) {
+					assertEquals(
+							"rgba(255, 0, 0, 1)",
+							webElement.findElement(catXpath).getCssValue(
+									"color"));
+				}
+			}
+		}
 	}
 
 	// PR24: Funcionamiento correcto de la ordenación por día.
 	@Test
 	public void prueba24() {
 		assertTrue(false);
+		// TODO
 	}
 
 	// PR25: Funcionamiento correcto de la ordenación por nombre.
 	@Test
 	public void prueba25() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
+		WebElement bSemana = driver.findElement(By.id("listSemana"));
+		bSemana.click();
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "task_title", 60);
+
+		// Comprobar al derechas
+		WebElement titleHead = driver.findElements(
+				By.xpath("//*[contains(@class, 'ui-column-title')]")).get(1);
+		titleHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		By titleXpath = By.xpath("//table/tbody/tr/td[2]");
+		List<WebElement> title = driver.findElements(titleXpath);
+		List<String> titleStr = new ArrayList<>();
+		for (WebElement webElement : title) {
+			titleStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(titleStr);
+		Collections.sort(expected);
+		for (int i = 0; i < titleStr.size(); i++) {
+			assertEquals(expected.get(i), titleStr.get(i));
+		}
+
+		// Comprobar al reves
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "task_title", 60);
+		titleHead = driver.findElements(
+				By.xpath("//*[contains(@class, 'ui-column-title')]")).get(1);
+		titleHead.click();
+
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+
+		title = driver.findElements(titleXpath);
+		titleStr = new ArrayList<>();
+		for (WebElement webElement : title) {
+			titleStr.add(webElement.getText());
+		}
+		expected = new ArrayList<>(titleStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < titleStr.size(); i++) {
+			assertEquals(expected.get(i), titleStr.get(i));
+		}
 	}
 
 	// PR26: Confirmar una tarea, inhabilitar el filtro de tareas terminadas, ir
@@ -517,6 +902,7 @@ public class PlantillaSDI2_Tests1617 {
 	@Test
 	public void prueba26() {
 		assertTrue(false);
+		// TODO
 	}
 
 	// PR27: Crear una tarea sin categoría y comprobar que se muestra en la
@@ -613,8 +999,54 @@ public class PlantillaSDI2_Tests1617 {
 	// refresca correctamente.
 	@Test
 	public void prueba30() {
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
 
-		assertTrue(false);
+		WebElement el = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"task_edit", 60).get(0);
+
+		el.click();
+
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "form-alta:send", 60);
+
+		new PO_TaskForm().rellenaEntrada(driver, "FueraInbox", "category_1",
+				"", "", "");
+
+		WebElement filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("Inbox");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Fuera", 60);
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoPresentePagina(driver, "FueraInbox");
+
+		WebElement bDia = driver.findElement(By.id("listInbox"));
+		bDia.click();
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("FueraInbox");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "No hay", 60);
+		SeleniumUtils.textoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoNoPresentePagina(driver, "FueraInbox");
+
+		WebElement bSemana = driver.findElement(By.id("listSemana"));
+		bSemana.click();
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("Inbox");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Fuera", 60);
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoPresentePagina(driver, "FueraInbox");
+
 	}
 
 	// PR31: Editar el nombre, y categoría (Se cambia a sin categoría) de una
@@ -622,14 +1054,129 @@ public class PlantillaSDI2_Tests1617 {
 	// correctamente.
 	@Test
 	public void prueba31() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "task_edit", 60).get(0);
+
+		WebElement bDia = driver.findElement(By.id("listDia"));
+		bDia.click();
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		WebElement pag3 = driver
+				.findElements(By.className("ui-paginator-page")).get(2);
+		pag3.click();
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "3 de 3", 60);
+		WebElement el = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"task_edit", 60).get(0);
+
+		el.click();
+
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "form-alta:send", 60);
+
+		new PO_TaskForm().rellenaEntrada(driver, "QuitarCategory",
+				"category_0", "", "", "");
+
+		WebElement filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("Quitar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Category", 60);
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoPresentePagina(driver, "QuitarCategory");
+
+		WebElement bInbox = driver.findElement(By.id("listInbox"));
+		bInbox.click();
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("Quitar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Category", 60);
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoPresentePagina(driver, "QuitarCategory");
+
+		WebElement bSemana = driver.findElement(By.id("listSemana"));
+		bSemana.click();
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("Quitar");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Category", 60);
+		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoPresentePagina(driver, "QuitarCategory");
 	}
 
 	// PR32: Marcar una tarea como finalizada. Comprobar que desaparece de las
 	// tres pseudolistas.
 	@Test
 	public void prueba32() {
-		assertTrue(false);
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		WebElement el = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"task_edit", 60).get(0);
+
+		el.click();
+
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "form-alta:send", 60);
+
+		WebElement titleE = driver.findElement(By.id("form-alta:titulo"));
+		titleE.click();
+		titleE.clear();
+		titleE.sendKeys("TFinalizada");
+
+		WebElement finalizadaE = driver.findElement(By
+				.id("form-alta:finished_input"));
+		finalizadaE.click();
+		finalizadaE.clear();
+		finalizadaE.sendKeys("22/03/2017");
+
+		WebElement send = driver.findElement(By.id("form-alta:send"));
+		send.click();
+
+		WebElement filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("TFinalizada");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "No hay", 60);
+		SeleniumUtils.textoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoNoPresentePagina(driver, "TFinalizada");
+
+		WebElement bDia = driver.findElement(By.id("listDia"));
+		bDia.click();
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("TFinalizada");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "No hay", 60);
+		SeleniumUtils.textoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoNoPresentePagina(driver, "TFinalizada");
+
+		WebElement bSemana = driver.findElement(By.id("listSemana"));
+		bSemana.click();
+		try {
+			Thread.sleep(500L);
+		} catch (InterruptedException e) {
+		}
+		filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
+				"ui-column-filter", 60).get(0);
+		filter.sendKeys("TFinalizada");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "No hay", 60);
+		SeleniumUtils.textoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoNoPresentePagina(driver, "TFinalizada");
 	}
 
 	// PR33: Salir de sesión desde cuenta de administrador.
