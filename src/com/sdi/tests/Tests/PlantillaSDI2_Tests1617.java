@@ -10,9 +10,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -33,15 +36,15 @@ import com.sdi.tests.utils.SeleniumUtils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PlantillaSDI2_Tests1617 {
 
-	WebDriver driver;
+	static WebDriver driver;
 	List<WebElement> elementos = null;
-	private String baseURL = "http://localhost:8280/sdi2-16";
+	private static String baseURL = "http://localhost:8180/sdi2-16";
 
 	public PlantillaSDI2_Tests1617() {
 	}
 
-	@Before
-	public void run() {
+	@BeforeClass
+	public static void run() {
 		// Este código es para ejecutar con la versión portale de Firefox 46.0
 		File pathToBinary = new File("S:\\firefox\\FirefoxPortable.exe");
 		FirefoxBinary ffBinary = new FirefoxBinary(pathToBinary);
@@ -53,8 +56,22 @@ public class PlantillaSDI2_Tests1617 {
 		// driver.get("http://localhost:8180/sdi2-n");
 	}
 
+	@Before
+	public void setUp() {
+
+		driver.navigate().to(baseURL);
+
+	}
+
 	@After
-	public void end() {
+	public void tearDown() {
+
+		driver.manage().deleteAllCookies();
+
+	}
+
+	@AfterClass
+	public static void end() {
 		// Cerramos el navegador
 		driver.quit();
 	}
@@ -742,8 +759,44 @@ public class PlantillaSDI2_Tests1617 {
 	// además las que deben ser.
 	@Test
 	public void prueba21() {
-		assertTrue(false);
-		// TODO
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
+		WebElement bDia = driver.findElement(By.id("listDia"));
+		bDia.click();
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		By plannedXpath = By.xpath("//table/tbody/tr/td[6]/span");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		for (int i = 1; i >= 0; i--) {
+			WebElement pag3 = driver.findElements(
+					By.className("ui-paginator-page")).get(i);
+			pag3.click();
+			SeleniumUtils.EsperaCargaPagina(driver, "text", (i + 1) + " de 2",
+					60);
+			List<WebElement> planned = driver.findElements(plannedXpath);
+			for (WebElement webElement : planned) {
+				Date actual = null;
+				try {
+					actual = sdf.parse(webElement.getText());
+				} catch (ParseException e) {
+					fail("Error parseando la fecha");
+				}
+
+				if (diffDays(new Date(), actual) <= 0) {
+					assertEquals("rgba(255, 0, 0, 1)",
+							webElement.getCssValue("color"));
+				} else {
+					assertNotEquals("rgba(255,0,0,1)",
+							webElement.getCssValue("color"));
+				}
+			}
+		}
 	}
 
 	// PR22: Comprobar que las tareas retrasadas están en rojo y son las que
@@ -766,18 +819,29 @@ public class PlantillaSDI2_Tests1617 {
 
 		By plannedXpath = By.xpath("//table/tbody/tr/td[6]/span");
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		List<WebElement> planned = driver.findElements(plannedXpath);
-		for (WebElement webElement : planned) {
-			assertEquals("rgba(255, 0, 0, 1)", webElement.getCssValue("color"));
-			Date actual = null;
-			try {
-				actual = sdf.parse(webElement.getText());
-			} catch (ParseException e) {
-				fail("Error parseando la fecha");
+		for (int i = 1; i >= 0; i--) {
+			WebElement pag3 = driver.findElements(
+					By.className("ui-paginator-page")).get(i);
+			pag3.click();
+			SeleniumUtils.EsperaCargaPagina(driver, "text", (i + 1) + " de 2",
+					60);
+			List<WebElement> planned = driver.findElements(plannedXpath);
+			for (WebElement webElement : planned) {
+				Date actual = null;
+				try {
+					actual = sdf.parse(webElement.getText());
+				} catch (ParseException e) {
+					fail("Error parseando la fecha");
+				}
+				if (diffDays(new Date(), actual) > 0) {
+					assertEquals("rgba(255, 0, 0, 1)",
+							webElement.getCssValue("color"));
+				} else {
+					assertNotEquals("rgba(255,0,0,1)",
+							webElement.getCssValue("color"));
+				}
 			}
-			assertTrue(actual.before(new Date()));
 		}
-		// TODO: igual que el anterior
 	}
 
 	// PR23: Comprobar que las tareas de hoy y futuras no están en rojo y que
@@ -797,11 +861,11 @@ public class PlantillaSDI2_Tests1617 {
 			Thread.sleep(1000L);
 		} catch (InterruptedException e1) {
 		}
-		for (int i = 3; i >= 0; i--) {
+		for (int i = 1; i >= 0; i--) {
 			WebElement pag3 = driver.findElements(
 					By.className("ui-paginator-page")).get(i);
 			pag3.click();
-			SeleniumUtils.EsperaCargaPagina(driver, "text", (i + 1) + " de 4",
+			SeleniumUtils.EsperaCargaPagina(driver, "text", (i + 1) + " de 2",
 					60);
 			// Sacar planeados
 			By trXpath = By.xpath("//table/tbody/tr");
@@ -830,8 +894,64 @@ public class PlantillaSDI2_Tests1617 {
 	// PR24: Funcionamiento correcto de la ordenación por día.
 	@Test
 	public void prueba24() {
-		assertTrue(false);
-		// TODO
+		new PO_LoginForm().rellenaEntrada(driver, "user1", "user1");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
+		WebElement bSemana = driver.findElement(By.id("listSemana"));
+		bSemana.click();
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver,
+				"id", "task_planned", 60);
+
+		// Comprobar al derechas
+		WebElement plannedHead = elementos.get(0);
+		plannedHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		By plannedXpath = By.xpath("//table/tbody/tr/td[6]");
+		List<WebElement> planned = driver.findElements(plannedXpath);
+		List<String> plannedStr = new ArrayList<>();
+		for (WebElement webElement : planned) {
+			plannedStr.add(webElement.getText());
+		}
+		List<String> expected = new ArrayList<>(plannedStr);
+		Collections.sort(expected);
+		for (int i = 0; i < plannedStr.size(); i++) {
+			assertEquals(expected.get(i), plannedStr.get(i));
+		}
+
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"task_planned", 60);
+
+		// Comprobar al derechas
+		plannedHead = elementos.get(0);
+		// Comprobar al reves
+		plannedHead.click();
+		// Esperar a que se ordene
+		try {
+			Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+		}
+		planned = driver.findElements(plannedXpath);
+		plannedStr = new ArrayList<>();
+		for (WebElement webElement : planned) {
+			plannedStr.add(webElement.getText());
+		}
+		expected = new ArrayList<>(plannedStr);
+		Collections.sort(expected);
+		Collections.reverse(expected);
+		for (int i = 0; i < plannedStr.size(); i++) {
+			assertEquals(expected.get(i), plannedStr.get(i));
+		}
 	}
 
 	// PR25: Funcionamiento correcto de la ordenación por nombre.
@@ -901,8 +1021,47 @@ public class PlantillaSDI2_Tests1617 {
 	// a la pagina donde está la tarea terminada y comprobar que se muestra.
 	@Test
 	public void prueba26() {
-		assertTrue(false);
-		// TODO
+		new PO_LoginForm().rellenaEntrada(driver, "user2", "user2");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Opciones", 60);
+		SeleniumUtils.ClickSubopcionMenuHover(driver,
+				"form-cabecera:MenuOpciones", "form-cabecera:listar");
+
+		WebElement el = SeleniumUtils.EsperaCargaPagina(driver, "id",
+				"task_edit", 60).get(0);
+
+		el.click();
+
+		SeleniumUtils.EsperaCargaPagina(driver, "id", "form-alta:send", 60);
+
+		new PO_TaskForm().rellenaEntrada(driver, "FinalizadaV", "", "", "",
+				"23/03/2017");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "Volver", 60);
+
+		WebElement pag3 = driver
+				.findElements(By.className("ui-paginator-page")).get(2);
+		pag3.click();
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "3 de 3", 60);
+
+		WebElement check = driver.findElement(By.xpath("//*[contains(@id,'"
+				+ "checkIndicador" + "')]"));
+		check.click();
+
+		SeleniumUtils.EsperaCargaPagina(driver, "Text", "FinalizadaV", 60);
+		SeleniumUtils.textoPresentePagina(driver, "FinalizadaV");
+
+		By tituloXpath = By.xpath("//td[2]/span");
+		By finalizadaXpath = By.xpath("//td[5]");
+		List<WebElement> titulos = driver.findElements(tituloXpath);
+		List<WebElement> finalizados = driver.findElements(finalizadaXpath);
+		for (int i = 0; i < titulos.size(); i++) {
+			if (finalizados.get(i).getText().trim().equals("")) {
+				assertEquals("rgba(0, 128, 0, 1)",
+						titulos.get(i).getCssValue("color"));
+			} else {
+				assertNotEquals("rgba(0, 128, 0, 1)", titulos.get(i)
+						.getCssValue("color"));
+			}
+		}
 	}
 
 	// PR27: Crear una tarea sin categoría y comprobar que se muestra en la
@@ -1068,9 +1227,9 @@ public class PlantillaSDI2_Tests1617 {
 		} catch (InterruptedException e) {
 		}
 		WebElement pag3 = driver
-				.findElements(By.className("ui-paginator-page")).get(2);
+				.findElements(By.className("ui-paginator-page")).get(1);
 		pag3.click();
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "3 de 3", 60);
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "2 de 2", 60);
 		WebElement el = SeleniumUtils.EsperaCargaPagina(driver, "id",
 				"task_edit", 60).get(0);
 
@@ -1110,9 +1269,9 @@ public class PlantillaSDI2_Tests1617 {
 		filter = SeleniumUtils.EsperaCargaPagina(driver, "class",
 				"ui-column-filter", 60).get(0);
 		filter.sendKeys("Quitar");
-		SeleniumUtils.EsperaCargaPagina(driver, "text", "Category", 60);
-		SeleniumUtils.textoNoPresentePagina(driver, "No hay tareas");
-		SeleniumUtils.textoPresentePagina(driver, "QuitarCategory");
+		SeleniumUtils.EsperaCargaPagina(driver, "text", "No hay", 60);
+		SeleniumUtils.textoPresentePagina(driver, "No hay tareas");
+		SeleniumUtils.textoNoPresentePagina(driver, "QuitarCategory");
 	}
 
 	// PR32: Marcar una tarea como finalizada. Comprobar que desaparece de las
@@ -1320,6 +1479,11 @@ public class PlantillaSDI2_Tests1617 {
 		SeleniumUtils.EsperaCargaPagina(driver, "text", "Login", 60);
 		SeleniumUtils.textoPresentePagina(driver, "GTD Task Manager");
 		SeleniumUtils.textoPresentePagina(driver, "Login");
+	}
+
+	public static int diffDays(Date until, Date from) {
+		long diff = until.getTime() - from.getTime();
+		return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
 
 }
